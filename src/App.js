@@ -15,6 +15,8 @@ import './App.css';
 // how does the cpu differentiate between the first and second click?
 // why is it that... the firstclickvalue is set to null, and yet on click, it says that it is the same as currentclickvalue, which is set to travis. aren't they different? 
 
+// commiting changes to github, jays suck
+
 const playerArray = [
 
   {
@@ -128,7 +130,6 @@ class App extends Component {
 
     const { firstClickValue } = this.state;
 
-    console.log("the firstClickValue is", firstClickValue);
     // deconstructing this.state object, deconstructing means extracting,
     // const showCard = this.state.showCard  
 
@@ -139,7 +140,7 @@ class App extends Component {
       <button 
         key={index} 
         className={playerCard.showCard ? "blueClass" : "redClass"} 
-        // this.handleClick method is expecting a parameter
+        // this.handleClick method is expecting a parameter, the index of the player array
         onClick={()=> this.handleClick(index)}
       >
         {playerCard.value}
@@ -154,6 +155,7 @@ class App extends Component {
         <div className="cardContainer">
           {newArray}
         </div>
+        <div>game time</div>
       </div>
     )
   }
