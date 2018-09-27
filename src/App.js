@@ -5,17 +5,12 @@ import logo from './logo.svg';
 import './App.css';
 
 
-// make each in
-// future note: ctrl D to change all names
-
-// current problem, aug 31. i wrote that if the firstclickvalue is equal to the currentclickvalue, then alert "right". but at the outset, they are both equal, ie null.   
-
-// i need... the cpu to hold the value of the first click, then compare it to the second click. how do i make it hold the value of the first click?
-
-// how does the cpu differentiate between the first and second click?
-// why is it that... the firstclickvalue is set to null, and yet on click, it says that it is the same as currentclickvalue, which is set to travis. aren't they different? 
-
-// commiting changes to github, jays suck
+// THINGS I NEED TO DO
+// on click, 
+// on click, when boolean has changed, do not allow it to toggle bac  
+// if the second card has the same value as the first card, do not allow it to toggle back to its original boolean
+  // we have a problem: when second card is clicked, it toggles boolean but not class 
+// on click,     
 
 const playerArray = [
 
@@ -46,80 +41,59 @@ class App extends Component {
     super(props);
     this.state = {
       players: this.shuffle(playerArray),
-      firstCardIndex: null,
-      firstClickValue: null,
-      currentClickValue: null,
-      currentIndex: null,
-      
-
+      initialCardIndex: null,
+      initialCardValue: null,
+      currentCardValue: null,
+      currentCardIndex: null,
     };
+
     this.handleClick = this.handleClick.bind(this);
+    console.log('initialCardValue starts off as', this.state.initialCardValue);
   }
 
-  handleClick(currentIndex){
+  handleClick(currentCardIndex){
 
-    const { firstCardIndex } = this.state;
-    const { firstClickValue} = this.state;
-    const { currentClickValue } = this.state;
+    const { initialCardIndex } = this.state;
+    const { initialCardValue } = this.state;
+    // const { currentCardValue } = this.state;
+    // const { currentCardIndex } = this.state;
     
-
-    // console.log('To start with, the firstCardIndex should be null. It is', firstCardIndex);
-    // console.log('To start with, the currentIndex should be null. It is', currentIndex);
-    // console.log('To start with, the firstClickValue should be null. It is', firstClickValue);
-    // console.log('To start with, the currentClickValue should be null. It is', currentClickValue);
-    // // We are cloning this.state.players because you never mutate state directly 
+    // We are cloning this.state.players because you never mutate state directly 
     // let p = this.state.players.slice();
     // let p = Object.assign([], this.state.players);
     let p = [...this.state.players];
-    p[currentIndex].showCard = !p[currentIndex].showCard;
 
-    // if firstCardIndex is null, setState firstCardIndex value. Else, compare two arrays.
+    // this variable allows the ShowCard key to toggle true/false. when card is clicked, the showCard key's boolean will be equal to not itself, ie, toggle.   
+    p[currentCardIndex].showCard = !p[currentCardIndex].showCard;
 
-    let currentValue = p[currentIndex].value;
+    // when a card gets clicked, let's give that card's value key a name. we'll call it currentCardValue 
+    let currentCardValue = p[currentCardIndex].value;
 
-    // !firstClickValue is the same as firstClickValue === null (and the same goes for firstCardIndex). 
-    // if (!firstClickValue && !firstCardIndex)
-    if (!firstClickValue && !firstCardIndex) {
+    // if there is a currentCardValue, which is to say, if the currentCardValue is not equal to null - its initial state, then we'll execute the following function. Which is what? What function?   
+
+    // if there is no initialCardValue - ie. if it's null, which it initially is, then set it to the value of the button that has just been clicked. ie Update its state. 
+    if (!initialCardValue && !initialCardIndex) {
       this.setState(
-        { firstClickValue: currentValue, firstCardIndex: currentIndex },
-        () => console.log("After clicking, the firstClickValue is now...", this.state.firstClickValue
-      ));       
-    }
+        { initialCardValue: currentCardValue, initialCardIndex: currentCardIndex }
+      );       
+    } 
 
-    let secondValue = p[currentIndex].value;
-
-    if (firstClickValue !== secondValue){
-      console.log('they dont match');
-    } else console.log('they do match');
-
-
-    // if (currentIndex !== firstCardIndex) {
-    //   console.log('not equal');
-    //   this.setState(
-    //     { currentClickValue: currentValue },
-    //     () => console.log("It looks like the currentClickValue is now...", this.state.firstClickValue
-    //     ));
-    // }
-
-    // if firstClickValue is equal to currentClickValue, then console log "hello". Problem: secondClickValue is not defined yet. We need to define it. How do we define it?
-
-    // console.log("Starting to define secondClickValue, I should get either Travis or Pillar", secondClickValue); 
-    // Problem: I am getting null. Why? 
+    console.log('initialCardValue becomes...' ,initialCardValue);
   }
 
   shuffle(array){
-    var currentIndex = array.length, temporaryValue, randomIndex;
+    var currentCardIndex = array.length, temporaryValue, randomIndex;
 
     // While there remain elements to shuffle...
-    while (0 !== currentIndex) {
+    while (0 !== currentCardIndex) {
 
       // Pick a remaining element...
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex -= 1;
+      randomIndex = Math.floor(Math.random() * currentCardIndex);
+      currentCardIndex -= 1;
 
       // And swap it with the current element.
-      temporaryValue = array[currentIndex];
-      array[currentIndex] = array[randomIndex];
+      temporaryValue = array[currentCardIndex];
+      array[currentCardIndex] = array[randomIndex];
       array[randomIndex] = temporaryValue;
     }
 
@@ -128,17 +102,18 @@ class App extends Component {
 
   render() {
 
-    const { firstClickValue } = this.state;
+    const { initialCardValue } = this.state;
 
     // deconstructing this.state object, deconstructing means extracting,
-    // const showCard = this.state.showCard  
+    const showCard = this.state.showCard  
 
-    const { players, firstCardIndex, secondClickValue } = this.state
+    const { players, initialCardIndex } = this.state
 
-    // console.log('firstCardIndex', firstCardIndex);
+    
     const newArray = players.map((playerCard, index) => 
       <button 
         key={index} 
+        // i want: the card to toggle between red and blue when clicked. i'm going to: use an inline conditional "?" that will change its class when its boolean is toggled 
         className={playerCard.showCard ? "blueClass" : "redClass"} 
         // this.handleClick method is expecting a parameter, the index of the player array
         onClick={()=> this.handleClick(index)}
@@ -155,7 +130,6 @@ class App extends Component {
         <div className="cardContainer">
           {newArray}
         </div>
-        <div>game time</div>
       </div>
     )
   }
