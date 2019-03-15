@@ -2,15 +2,7 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 
 import logo from './logo.svg';
-import './App.css';
-
-
-// THINGS I NEED TO DO
-// on click, 
-// on click, when boolean has changed, do not allow it to toggle bac  
-// if the second card has the same value as the first card, do not allow it to toggle back to its original boolean
-  // we have a problem: when second card is clicked, it toggles boolean but not class 
-// on click,     
+import './App.css';   
 
 const playerArray = [
 
@@ -34,6 +26,26 @@ const playerArray = [
     value: "pillar",
     showCard: false,
   },
+  {
+    img: "assets",
+    value: "smoak",
+    showCard: false,
+  },
+  {
+    img: "assets",
+    value: "smoak",
+    showCard: false,
+  },
+  {
+    img: "assets",
+    value: "martin",
+    showCard: false,
+  },
+  {
+    img: "assets",
+    value: "martin",
+    showCard: false,
+  },
 ];    
 
 class App extends Component {
@@ -48,38 +60,60 @@ class App extends Component {
     };
 
     this.handleClick = this.handleClick.bind(this);
-    console.log('initialCardValue starts off as', this.state.initialCardValue);
+    this.render = this.render.bind(this);
+    
   }
 
   handleClick(currentCardIndex){
 
-    const { initialCardIndex } = this.state;
-    const { initialCardValue } = this.state;
-    // const { currentCardValue } = this.state;
-    // const { currentCardIndex } = this.state;
+    const { initialCardIndex, initialCardValue, currentCardValue, players, playerArray } = this.state;
     
-    // We are cloning this.state.players because you never mutate state directly 
-    // let p = this.state.players.slice();
-    // let p = Object.assign([], this.state.players);
-    let p = [...this.state.players];
+    // cloning this.state.players because we never mutate state directly
+    let playersCloned = [...players];
+    console.log(playersCloned);
+    
+    
+    // in order to flip the card over, we set the showCard property of the current card to "true".
+    playersCloned[currentCardIndex] = {...playersCloned[currentCardIndex], showCard: true };
 
-    // this variable allows the ShowCard key to toggle true/false. when card is clicked, the showCard key's boolean will be equal to not itself, ie, toggle.   
-    p[currentCardIndex].showCard = !p[currentCardIndex].showCard;
+    this.setState({ players: playersCloned });
 
-    // when a card gets clicked, let's give that card's value key a name. we'll call it currentCardValue 
-    let currentCardValue = p[currentCardIndex].value;
+    // we need to store the first click's value.
+    let latestCardValue = playersCloned[currentCardIndex].value;
 
-    // if there is a currentCardValue, which is to say, if the currentCardValue is not equal to null - its initial state, then we'll execute the following function. Which is what? What function?   
-
-    // if there is no initialCardValue - ie. if it's null, which it initially is, then set it to the value of the button that has just been clicked. ie Update its state. 
-    if (!initialCardValue && !initialCardIndex) {
+    // we need to store the first click's index.
+    let latestCardIndex = [currentCardIndex];
+  
+    // let's update those properties.   
+    if ( !initialCardValue && !initialCardIndex ) {
       this.setState(
-        { initialCardValue: currentCardValue, initialCardIndex: currentCardIndex }
-      );       
-    } 
+        { initialCardIndex: latestCardIndex, currentCardIndex: currentCardIndex, currentCardValue: latestCardValue },
+      )
+    }; 
 
-    console.log('initialCardValue becomes...' ,initialCardValue);
-  }
+    // we only want to make a comparison AFTER the second card has been clicked. 
+    if ( currentCardIndex !== null && currentCardValue ) {
+      
+      // if the cards don't match, we need to wait two seconds, then flip both cards back over.  
+      if( currentCardValue !== latestCardValue ){
+        setTimeout(() => {
+          this.setState({ 
+            playersCloned: playersCloned[currentCardIndex].showCard = false,   
+            playersCloned: playersCloned[initialCardIndex].showCard = false, 
+          });}, 2000);      
+
+      // if they match, we keep both cards facing open.     
+      } else if ( currentCardValue === latestCardValue ) {
+        playersCloned[currentCardIndex] = { ...playersCloned[currentCardIndex], showCard: true }
+      };
+
+      // we want to set up the next round of clicks, so we return all properties back to null.  
+      this.setState(
+        { initialCardIndex: null, currentCardIndex: null, currentCardValue: null }
+      )
+    }
+
+  };
 
   shuffle(array){
     var currentCardIndex = array.length, temporaryValue, randomIndex;
@@ -99,21 +133,19 @@ class App extends Component {
 
     return array;
   }
+ 
 
   render() {
 
-    const { initialCardValue } = this.state;
 
     // deconstructing this.state object, deconstructing means extracting,
     const showCard = this.state.showCard  
 
     const { players, initialCardIndex } = this.state
-
     
-    const newArray = players.map((playerCard, index) => 
+    const newArray = players.map((playerCard, index) =>
       <button 
         key={index} 
-        // i want: the card to toggle between red and blue when clicked. i'm going to: use an inline conditional "?" that will change its class when its boolean is toggled 
         className={playerCard.showCard ? "blueClass" : "redClass"} 
         // this.handleClick method is expecting a parameter, the index of the player array
         onClick={()=> this.handleClick(index)}
@@ -123,10 +155,16 @@ class App extends Component {
         {index}
       </button>
     ); 
+  console.log("here", newArray);
+    console.log("in the render, the initialCardValue is... ", this.state.initialCardValue);
+    console.log("in the render, the currentCardValue is...", this.state.currentCardValue);
+    console.log("in the render, the initialCardIndex is...", this.state.initialCardIndex);
+    console.log("in the render, the currentCardIndex is...", this.state.currentCardIndex);
+
   
     return (
       <div>
-        <h1>hello</h1>
+        <h1>hello3</h1>
         <div className="cardContainer">
           {newArray}
         </div>
